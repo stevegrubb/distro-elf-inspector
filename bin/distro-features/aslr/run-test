@@ -1,0 +1,42 @@
+#!/bin/sh
+# (c) 2013, Steve Grubb <sgrubb@redhat.com>
+#
+# This software may be freely redistributed under the terms of the GNU
+# public license version 2.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+source ./tests.conf
+
+if [ $# -ne 1 ] ; then
+	echo "You need to pass a test to execute"
+	exit 1
+fi
+PGM="./$1"
+RESULTS="$1.log"
+
+if [ ! -x $PGM ] ; then
+	echo "$PGM is not executable"
+	exit 1
+fi
+
+echo "Gathering $PASSES data samples for $PGM..."
+if [ -e "$RESULTS" ] ; then
+	rm "$RESULTS"
+fi
+touch "$RESULTS"
+
+i="0"
+while [ $i -lt $PASSES ]
+do
+	$PGM >> $RESULTS 2>/dev/null
+	if [ $? -ne 0 ] ; then
+		echo "$test failed"
+		exit 1
+	fi
+	i=`expr $i + 1`
+done
+
+echo "Done"

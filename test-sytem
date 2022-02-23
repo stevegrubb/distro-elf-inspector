@@ -1,0 +1,23 @@
+#!/bin/sh
+./check-dependencies
+if [ $? -ne 0 ] ; then
+	exit 1
+fi
+
+source ./conf
+
+echo "We are testing $release. If that's wrong hit Ctl-c within 5 seconds"
+sleep 6
+echo "Starting system test"
+
+./grade-distro
+./grade-installed-apps
+if [ $? -ne 0 ] ; then
+	exit 1
+fi
+./csv2pivot $report_dir/app-rollup.csv
+mv pivottable.html $report_dir/
+
+"You can use ./view-report to open a pivottable of the application results"
+
+echo "Done"

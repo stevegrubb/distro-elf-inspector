@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+
+total=0
+xx=`readelf -sW $f 2>/dev/null | grep FUNC | grep ' UND ' | wc -l`
+if [ x"$xx" != "x" ] ; then
+	total="$xx"
+fi
+
+echo -n $total
+

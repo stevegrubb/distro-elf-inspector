@@ -1,0 +1,9 @@
+#!/bin/sh
+source ./conf
+
+if [ -x /usr/bin/firefox ] ; then
+	/usr/bin/firefox file://$report_dir/pivottable.html
+else
+	"Firefox wasn't found"
+fi
+

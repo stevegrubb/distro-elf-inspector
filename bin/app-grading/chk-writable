@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+writable="022"
+mode=`stat --format "%a" $f`
+hmode=`echo "ibase=8;$mode" | bc`
+if (($hmode & $writable)) ; then
+	echo -n "writable"
+else
+	echo -n "ok"
+fi

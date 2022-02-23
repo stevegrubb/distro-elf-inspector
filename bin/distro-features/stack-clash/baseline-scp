@@ -1,0 +1,7 @@
+#!/bin/sh
+gcc -c -fstack-clash-protection -I/usr/include test.c
+if [ $? -eq 0 ] ; then
+	echo "stack-clash-protection"
+fi
+
+rm -f *.o

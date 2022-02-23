@@ -1,0 +1,68 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+total=0
+
+xx=`readelf -sW $f 2>/dev/null | awk 'NF>7 { print $8}' 2>/dev/null`
+if [ x"$xx" != "x" ] ; then
+	echo "$xx" | grep -w 'bcopy@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'bcmp@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'gets@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'getwd@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'mktemp@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'tmpnam@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'rindex@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'index@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'getpass@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'getpw@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'valloc@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'rand@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+	echo "$xx" | grep -w 'vfork@.*GLIBC.*' >/dev/null
+	if [ $? -eq 0 ] ; then
+		total=$(($total + 1))
+	fi
+fi
+
+echo -n $total
+

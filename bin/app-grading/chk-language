@@ -1,0 +1,41 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+lang="C"
+syms=`objdump --dynamic-syms --demangle $f 2>/dev/null`
+xx=`echo $syms | grep 'std::cout'`
+if [ x"$xx" != "x" ] ; then
+	echo -n "C++"
+	exit 0
+fi
+xx=`echo $syms | grep 'camlStdlib__'`
+if [ x"$xx" != "x" ] ; then
+	echo -n "OCaml"
+	exit 0
+fi
+xx=`echo $syms | grep 'base_GHCzi'`
+if [ x"$xx" != "x" ] ; then
+	echo -n "GHC"
+	exit 0
+fi
+xx=`echo $syms | grep '_gfortran_'`
+if [ x"$xx" != "x" ] ; then
+	echo -n "Fortran"
+	exit 0
+fi
+xx=`readelf -SW $f 2>/dev/null | egrep '.gosymtab|.go.buildinfo|x_cgo_init'`
+if [ x"$xx" != "x" ] ; then
+	lang="go"
+else
+	if strings $f | egrep 'rustc-demangle|rust_begin_short_backtrace' >/dev/null ; then
+		lang="rust"
+	fi
+fi
+
+echo -n $lang
+

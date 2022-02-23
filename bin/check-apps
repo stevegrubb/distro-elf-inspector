@@ -1,0 +1,73 @@
+#!/bin/sh
+
+if [ ! -e "$report_dir" ] ; then
+	echo "Can't find $report_dir"
+	exit 1
+fi
+
+if [ $# -ge 1 ] ; then
+	packages="$@"
+else
+	# Skip the kernel as its special
+	echo " Querying packages..." >&2
+	packages=`rpm -qa --queryformat "%{NAME}.%{ARCH}\n" | egrep -v 'kernel.|debuginfo.|.noarch|gpg-pubkey' | sort`
+fi
+
+#Build tables for later
+echo " Building tables..." >&2
+
+# Look for daemons, need this for later...
+export DAEMON=`grep ^ExecStart /lib/systemd/system/*.service | tr '=' ' ' | awk '{ print $2 }'`
+
+# Look for parsers of untrusted media...need this for later
+UNTRUSTED1=""
+rpms=`rpm -qa --queryformat "%{NAME}\n" | egrep -v '\-devel|^perl|^python'`
+for p in $rpms
+do
+        rpm -qi $p | grep -i 'librar' | egrep -i 'image format files|rendering library|Adobe Flash|multimedia library|image files|codec|BMP|PPM|PCX|GIF|JPEG|PNG|SVG |MPEG4|h263|ac3|asf| avi|mjpeg|archive formats|bzip2|zip archives' >/dev/null 2>&1
+        if [ $? -eq 0 ] ; then
+                UNTRUSTED1="$UNTRUSTED1 `rpm -ql $p | egrep '^\/lib|^\/usr\/lib'`"
+        fi
+done
+export UNTRUSTED=`echo "$UNTRUSTED1" | sort`
+echo " Building tables complete" >&2
+
+export ANNOCHECK_VERSION=`annocheck --version | grep annocheck | awk '{ print $3 }' | sed 's/.$//'`
+
+num=`echo $packages | wc -w`
+echo " Testing $num packages"
+
+export HEADER="FILE,PACKAGE,SOURCE_RPM,CLASS,MIME_TYPE,EXECSTACK,PIE,RELRO,STACK_PROTECTOR,FORTIFY_SOURCE,CET,STACK_CLASH,RWX_SEGMENT,UNEXPECTED_INTERP,HAS_RPATH,LINES_OF_CODE,LINK_FAN_IN,EXTERN_FUNCS,FILE_WRITABLE,CHGRPS_ISSUE,USES_DEPRECATED_FUNCS,USES_CERT_UNSAFE_FUNCS,USES_UNSAFE_STRING_FUNCS,USES_PARSING_FUNCS,USES_SHELL_EXECUTION,USES_IPV4_ONLY_FUNCS,PROG_LANGUAGE,USES_SECCOMP,USES_CAPABILITIES,CHANGES_UID,USES_CHROOT,USES_DLOPEN"
+
+###############################
+# This starts the real testing
+###############################
+if [ -x /usr/bin/tasker ] ; then
+	echo " Using tasker"
+	sleep 1
+	echo $packages | tr ' ' '\n' | tasker "$mcwd"/bin/do-package @@
+else
+	for p in $packages
+	do
+		"$mcwd"/bin/do-package $p
+		if [ $? -ne 0 ] ; then
+			echo "Stopping on an error grading apps"
+			exit 1
+		fi
+	done
+fi
+
+# Now, do the app-rollup report
+app_treport="$report_dir/app-rollup.tmp"
+echo "" > $app_treport
+for f in `ls $report_dir/*.$arch`
+do
+        tail -n +2 $f >> $app_treport
+done
+
+app_rollup="$report_dir/app-rollup.csv"
+echo "$HEADER" > $app_rollup
+cat $app_treport | grep -v -e '^$' | sort >> $app_rollup
+echo -e "\n" >> $app_rollup
+rm -f $app_treport
+

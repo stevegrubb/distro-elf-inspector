@@ -1,0 +1,19 @@
+#!/bin/sh
+
+cd "$mcwd"/bin/distro-features/ || exit
+rm -f "$distro_report"
+./check-baseline "$mcwd"
+./score-baseline "$mcwd"
+cat "$distro_base_score"
+cd "$mcwd" || exit
+
+# Note, the dangling comma at the end is intentional
+HEADER="DISTRIBUTION,SYSCTL,LSMS,BOOT,ASLR,PIE,SSP,FORTIFY,CFP,SCP,RELRO,SECCOMP,SCORE,"
+
+# Now, do the distro-rollup report
+rollup="$report_dir/distro-rollup.csv"
+echo "$HEADER" > $rollup
+cat "$distro_base_score" | awk '{ printf "%s,", $2 }' >> $rollup
+sed -i 's/.$//' "$rollup"
+echo -e "\n" >> "$rollup"
+

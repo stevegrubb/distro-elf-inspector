@@ -1,0 +1,8 @@
+#!/bin/sh
+
+source ./conf
+mkdir -p "$report_dir"
+
+echo "Checking rpms for risk..."
+"$mcwd"/bin/check-apps
+

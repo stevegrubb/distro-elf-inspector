@@ -1,0 +1,7 @@
+#!/bin/sh
+gcc -c -fcf-protection -I/usr/include test.c
+if [ $? -eq 0 ] ; then
+	echo "control-flow-protection"
+fi
+
+rm -f *.o

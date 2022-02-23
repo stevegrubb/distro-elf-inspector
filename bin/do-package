@@ -1,0 +1,209 @@
+#!/bin/sh
+
+p="$1"
+
+if [ -z $report_dir ] ; then
+	echo "report_dir not set"
+	exit 1
+fi
+
+if [ ! -e "$report_dir" ] ; then
+	echo "Can't find $report_dir"
+	exit 1
+fi
+
+if [ -z "$DAEMON" ] ; then
+	echo "DAEMON not set"
+	exit 1
+fi
+
+if [ -z "$UNTRUSTED" ] ; then
+	echo "UNTRUSTED not set"
+	exit 1
+fi
+
+what_is_file ()
+{
+	f=$1
+        APP=""
+        if [ x"$DAEMON" != "x" ] ; then
+                for d in $DAEMON
+                do
+                        if [ "$f" = "$d" ] ; then
+                                APP="daemon"
+                                break
+                        fi
+                done
+        fi
+        if [ x"$APP" = "x" ] ; then
+                # See if this is a library or a setuid app
+                if [ `echo "$f" | grep '\/lib' | grep '\.so'` ] ; then
+                        APP="library"
+                elif [ `find "$f" -perm -004000 -type f -print` ] ; then
+                        APP="setuid"
+                elif [ `find "$f" -perm -002000 -type f -print` ] ; then
+                        APP="setgid"
+                elif [ -x /usr/bin/filecap ] && [ `filecap "$f" 2> /dev/null | wc -w` -gt 0 ] ; then
+                        APP="setcap"
+                else
+                        syms1=`/usr/bin/readelf -s "$f" 2>/dev/null | egrep ' connect@.*GLIBC| listen@.*GLIBC| accept@.*GLIBC|accept4@.*GLIBC'`
+                        syms2=`/usr/bin/readelf -s "$f" 2>/dev/null | egrep ' getaddrinfo@.*GLIBC| getnameinfo@.*GLIBC| getservent@.*GLIBC| getservbyname@.*GLIBC| getservbyport@.*GLIBC|gethostbyname@.*GLIBC| gethostbyname2@.*GLIBC|  gethostbyaddr@.*GLIBC|  gethostbyaddr2@.*GLIBC'`
+                        if [ x"$syms1" != "x" ] ; then
+                                if [ x"$syms2" != "x" ] ; then
+                                        APP="network-ip"
+                                else
+                                        APP="network-local"
+                                fi
+                        fi
+                fi
+        fi
+        if [  x"$APP" = "x" -a x"$UNTRUSTED" != "x" ] ; then
+                libs=`ldd $f 2> /dev/null | awk 'NF>2 { print $3 }'`
+                for L in $libs
+                do
+                        if [[ $UNTRUSTED =~ $L ]] ; then
+                                APP="media-app"
+                                break
+                        fi
+                done
+        fi
+        if [ x"$APP" = "x" ] ; then
+                APP="exec"
+        fi
+	echo -n "$APP,"
+}
+
+
+do_file () {
+	f="$1"
+	typeset package="$2"
+	cd bin/app-grading || exit
+		# What is the mime type for fapolicyd
+		./chk-mime $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Is stack executable
+		./chk-execstack $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# pie usage
+		./chk-pie $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Relro usage
+		./chk-relro $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# stack prot flags
+		./chk-flags $f "stack" >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# FORTIFY_SOURCE flags
+		./chk-flags $f "fortify" >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Control Flow Integrity flags
+		./chk-flags $f "cet" >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# stack clash flags
+		./chk-flags $f "clash" >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# RWX segment
+		./chk-flags $f "segment" >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Is interpreter normal
+		./chk-interp $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Is rpath normal
+		./chk-rpath $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Get program lines of assembler
+		./chk-size $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# How much fan-in
+		./chk-links $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# how many external functions
+		./chk-ext-funcs $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# File's perms are writable
+		./chk-writable $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Changes groups correctly
+		./chk-groups $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Uses deprecated functions
+		./chk-legacy $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Uses CERT unsafe functions
+		./chk-us-cert $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Risky string handling
+		./chk-string $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Heavy parsing
+		./chk-parsing $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Execute children by the shell
+		./chk-shell-exec $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# IPv4 only functions
+		./chk-old-network $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Language
+		./chk-language $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Uses seccomp
+		./chk-seccomp $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Uses capabilies
+		./chk-capabilities $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Changes uid
+		./chk-chuid $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Changes root
+		./chk-chroot $f >> $report_dir/$package
+		echo -n "," >> $report_dir/$package
+		# Uses dlopen
+		./chk-dlopen $f >> $report_dir/$package
+		# This is to end the line
+		echo "" >> $report_dir/$package
+	cd "$mcwd" || exit
+}
+
+
+do_package () {
+typeset package="$1"
+files=`rpm -ql $1`
+if [ $? -ne 0 ] ; then
+	exit 1
+fi
+echo "$HEADER" > $report_dir/$package
+for f in $files
+do
+	# Only process files
+	if [ ! -f "$f" ] ; then
+		continue
+	fi
+	# Only process ELF files
+	res=`file "$f" 2>/dev/null`
+	if ! echo "$res" | grep -qw 'ELF' ; then
+		continue
+	fi
+	# skip 32 bit to prevent duplicates
+	if echo "$res" | grep -qw '32-bit' ; then
+		continue
+	fi
+	# output file name
+	echo -n "$f," >> $report_dir/$package
+	# what is the package
+	p=`echo $package | awk -F. '{ print $1 }'`
+	echo -n "$p," >> $report_dir/$package
+	# what is the source package
+	src=`rpm -q --queryformat '%{SOURCERPM}' $package 2>/dev/null`
+	p=`$mcwd/bin/rpmname -name $src 2>/dev/null`
+	echo -n "$p," >> $report_dir/$package
+	# what is it
+	what_is_file $f >> $report_dir/$package
+	do_file $f $package
+done
+}
+
+echo "$p"
+do_package $p
+

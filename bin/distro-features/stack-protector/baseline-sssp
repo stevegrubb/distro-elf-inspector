@@ -1,0 +1,17 @@
+#!/bin/sh
+gcc -c -fstack-protector -I/usr/include test.c
+if [ $? -eq 0 ] ; then
+	echo "stack-protector"
+fi
+
+gcc -c -fstack-protector-strong -I/usr/include test.c
+if [ $? -eq 0 ] ; then
+	echo "stack-protector-strong"
+fi
+
+gcc -c -fstack-protector-all -I/usr/include test.c
+if [ $? -eq 0 ] ; then
+        echo "stack-protector-all"
+fi
+
+rm -f *.o

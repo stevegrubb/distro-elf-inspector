@@ -1,0 +1,50 @@
+#!/bin/sh
+# rpmname
+# part of the Rookery buildsystem. Hatch you own little penguin.
+# Copyright (c) 2004 Steve Grubb. ALL RIGHTS RESERVED.
+#
+# This software may be freely redistributed and/or modified under the
+# terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; see the file COPYING. If not, write to the
+# Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#
+# This program will parse and output the selected portion of the given
+# file name.
+
+USAGE="Usage: rpmname -name|-ver|-arch  src.rpm"
+if [ $# -ne 2 ] ; then
+        echo "$USAGE" 1>&2
+        exit 1
+fi
+
+typeset bf=`echo $2 | sed 's/\.rpm$//g'| sed 's/\.src$//g' | sed 's/\.i[3456]86$//g' | sed 's/\.noarch$//g'`
+
+
+if [ "$1" =  "-name" ] ; then
+typeset name=`echo $bf | awk '{
+	split($1, p, "-") ;
+	printf("%s", p[1]) ;
+	i=2
+	while ( ! match(p[i], /^[0-9]/) )
+	{
+		printf( "-%s", p[i++] ) ;
+	}
+}'`
+echo $name
+else
+        echo "$USAGE" 1>&2
+	exit 1
+fi
+
+exit 0
+

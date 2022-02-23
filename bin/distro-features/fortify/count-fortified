@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo -n "Fortified functions "
+if [ $# -eq 1 ] ; then
+	readelf -sW $1 2>/dev/null | grep _chk@GLIBC | awk '{ print $8 }' | cut -c 3- | sed -e 's/_chk@.*//' | wc -l
+else
+	readelf -sW /usr/lib64/libc.so.6 2>/dev/null | grep _chk@@ | awk '{ print $8 }' | cut -c 3- | sed -e 's/_chk@.*//' | wc -l
+fi
+

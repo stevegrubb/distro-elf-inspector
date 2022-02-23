@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Critical bootparams (as of 5.13):
+# =================
+# fips=1
+# audit=1
+# audit_backlog_limit=8192
+# slub_debug=P
+# page_poison=1
+# slab_nomerge
+# pti=on
+# vsyscall=none
+# init_on_free=1
+# page_alloc.shuffle=1
+# randomize_kstack_offset
+#
+
+critical="fips|audit=|audit_backlog_limit|slub_debug|page_poison|slab_nomerge|pti=|vsyscall|init_on_alloc|init_on_free|page_alloc.shuffle|debugfs=|randomize_kstack_offset"
+
+list=`cat /proc/cmdline 2>/dev/null | tr ' ' '\n' | egrep "$critical"`
+for i in $list
+do
+	echo "bootparam $i"
+done

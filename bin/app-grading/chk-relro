@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+RELRO="no"
+if readelf -l "$f" 2>/dev/null | grep -q 'GNU_RELRO'; then
+	RELRO="partial"
+	if readelf -d "$f" 2>/dev/null | grep -q 'BIND_NOW'; then
+		RELRO="full"
+	fi
+fi
+echo -n $RELRO

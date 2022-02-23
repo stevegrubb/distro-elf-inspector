@@ -1,0 +1,11 @@
+#!/bin/sh
+gcc -I/usr/include test.c -o test -Wl,-z,relro 
+if [ $? -eq 0 ] ; then
+	echo "relro partial"
+fi
+gcc -I/usr/include test.c -o test -Wl,-z,relro -Wl,-z,now
+if [ $? -eq 0 ] ; then
+	echo "relro full"
+fi
+
+rm -f test  *.o

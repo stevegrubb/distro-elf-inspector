@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+norm="/lib64/ld-linux-x86-64.so.2"
+
+# Skip libraries
+if [ `echo "$f" | grep '\/lib' | grep '\.so'` ] ; then
+	echo -n "ok"
+	exit 0
+fi
+if [ `echo "$f" | egrep '$\.o|$\.a'` ] ; then
+	echo -n "ok"
+	exit 0
+fi
+interp=`readelf -l $f 2>/dev/null | grep -w interpreter | tr '][' ' ' | awk '{ print $4 }'`
+if [ $norm = "$interp" -o x"$interp" = "x" ] ; then
+	echo -n "ok"
+else
+	echo -n "bad-interp"
+fi

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+source ./tests.conf
+
+for t in $TESTS
+do
+	./run-test $t
+done
+

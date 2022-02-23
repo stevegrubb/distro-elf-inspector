@@ -1,0 +1,21 @@
+#!/bin/sh
+
+source ./conf
+mkdir -p "$report_dir"
+if [ $? -ne 0 ] ; then
+	echo "error making $report_dir"
+	exit 1
+fi
+cd "$report_dir"
+if [ $? -eq 0 ] ; then
+	rm -f *
+else
+	exit 1
+fi
+cd "$mcwd"
+
+
+echo "Checking system mitigations..."
+"$mcwd"/bin/check-distro
+echo
+

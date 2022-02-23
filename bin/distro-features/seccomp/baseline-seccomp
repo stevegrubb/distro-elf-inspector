@@ -1,0 +1,7 @@
+#!/bin/sh
+gcc -I/usr/include test.c -o test -Wl,-z,relro -Wl,-z,now
+if [ $? -eq 0 ] ; then
+	./test
+fi
+
+rm -f test  *.o

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ ! -e /sys/kernel/security/lsm ] ; then
+	# we have capabilities and selinux
+	echo "lsms 2"
+	exit 0
+fi
+
+echo -n "lsms "
+cat /sys/kernel/security/lsm 2>/dev/null | tr ',' ' ' | wc -w

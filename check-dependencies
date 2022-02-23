@@ -1,0 +1,69 @@
+#!/bin/sh
+stop=0
+
+pgm=$(which rpm)
+if [ x"$pgm" = "x" ] ; then
+        echo "rpm package needs to be installed"
+        stop=1
+fi
+pgm=$(which gcc)
+if [ x"$pgm" = "x" ] ; then
+        echo "gcc package needs to be installed"
+        stop=1
+fi
+pgm=$(which readelf)
+if [ x"$pgm" = "x" ] ; then
+        echo "binutils package needs to be installed"
+        stop=1
+fi
+if [ ! -e /usr/include/bits ] ; then
+        echo "glibc-headers package needs to be installed"
+        stop=1
+fi
+pgm=$(which make)
+if [ x"$pgm" = "x" ] ; then
+        echo "make package needs to be installed"
+        stop=1
+fi
+
+pgm=$(which readelf)
+if [ x"$pgm" = "x" ] ; then
+        echo "binutils package needs to be installed"
+        stop=1
+fi
+pgm=$(which bc)
+if [ x"$pgm" = "x" ] ; then
+        echo "bc package needs to be installed"
+        stop=1
+fi
+pgm=$(which annocheck)
+if [ x"$pgm" = "x" ] ; then
+        echo "annobin-annocheck package needs to be installed"
+        stop=1
+fi
+pgm=$(which filecap)
+if [ x"$pgm" = "x" ] ; then
+        echo "libcap-ng-utils package needs to be installed"
+        stop=1
+fi
+pgm=$(which objdump)
+if [ x"$pgm" = "x" ] ; then
+        echo "binutils package needs to be installed"
+        stop=1
+fi
+pgm=$(which fapolicyd-cli)
+if [ x"$pgm" = "x" ] ; then
+        echo "fapolicyd package needs to be installed"
+        stop=1
+fi
+pgm=$(which tasker)
+if [ x"$pgm" = "x" ] ; then
+	echo "tasker is not found but would provide a `nproc` times speedup"
+fi
+
+if [ $stop -eq 0 ] ; then
+	echo "Dependencies are good"
+	exit 0
+fi
+exit 1
+

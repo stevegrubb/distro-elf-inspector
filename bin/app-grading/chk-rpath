@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+res=`objdump -j .dynamic -x $f 2>/dev/null | egrep -i 'rpath|runpath'`
+if [ x"$res" = "x" ] ; then
+	echo -n "none"
+elif test `echo "$res" | grep "runpath"` ; then
+	echo -n "runpath"
+else
+	echo -n "rpath"
+fi

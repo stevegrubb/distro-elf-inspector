@@ -1,0 +1,76 @@
+#!/bin/sh
+
+if [ $# -ne 2 ] ; then
+	echo -n "missing parameters"
+	exit 1
+fi
+
+if [ ! -e $1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+# annocheck became easier to use starting at 9.49
+if (( $(echo "$ANNOCHECK_VERSION < 9.49" | bc -l) )); then
+
+	common="-v --verbose --skip-glibcxx-assertions --skip-stack-realign --skip-writeable-got --skip-threads --skip-textrel --skip-short-enum --skip-run-path --skip-property-note --skip-pic --skip-optimization --skip-entry --skip-gnu-relro --skip-bind-now --skip-dynamic --skip-pie --skip-gnu-stack"
+
+	if [ "$2" = "stack" ] ; then
+		xx=`annocheck $common --skip-cf-protection --skip-fortify --skip-stack-clash --skip-rwx-seg $f 2>/dev/null`
+	elif [ "$2" = "fortify" ] ; then
+		xx=`annocheck $common --skip-cf-protection --skip-stack-prot --skip-stack-clash --skip-rwx-seg $f 2>/dev/null`
+	elif [ "$2" = "cet" ] ; then
+		xx=`annocheck $common --skip-stack-prot --skip-fortify --skip-stack-clash --skip-rwx-seg $f 2>/dev/null`
+	elif [ "$2" = "clash" ] ; then
+		xx=`annocheck $common --skip-cf-protection --skip-fortify --skip-stack-prot --skip-rwx-seg $f 2>/dev/null`
+	elif [ "$2" = "segment" ] ; then
+		xx=`annocheck $common --skip-cf-protection --skip-fortify --skip-stack-clash --skip-stack-prot $f 2>/dev/null`
+	else
+		echo -n "n/a"
+		exit 0
+	fi
+
+	yy=`echo $xx | grep FAIL | egrep -v 'Compiled without|Gaps were detected|there are FAIL results that'`
+	if [ x"$yy" != "x" ] ; then
+		if [ "$2" = "segment" ] ; then
+			echo -n "bad"
+		else
+			echo -n "missing"
+		fi
+	else
+		echo -n "ok"
+	fi
+
+else
+
+	if [ "$2" = "stack" ] ; then
+        	xx=`annocheck --skip-all --test-stack-prot $f 2>/dev/null`
+	elif [ "$2" = "fortify" ] ; then
+        	xx=`annocheck --skip-all --test-fortify $f 2>/dev/null`
+	elif [ "$2" = "cet" ] ; then
+        	xx=`annocheck --skip-all --test-cf-protection $f 2>/dev/null`
+	elif [ "$2" = "clash" ] ; then
+        	xx=`annocheck --skip-all --test-stack-clash $f 2>/dev/null`
+	elif [ "$2" = "segment" ] ; then
+        	xx=`annocheck --skip-all --test-rwx-seg $f 2>/dev/null`
+	else
+        	echo -n "n/a"
+	        exit 0
+	fi
+
+	yy=`echo $xx | grep PASS`
+	if [ x"$yy" != "x" ] ; then
+		echo -n "ok"
+	else
+		if [ "$2" = "segment" ] ; then
+			echo -n "bad"
+		else
+			echo -n "missing"
+		fi
+	fi
+
+fi
+
+rm -rf annocheck.data.*
+

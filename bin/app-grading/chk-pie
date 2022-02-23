@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+PIE="no"
+if [ -e /proc/sys/kernel/exec-shield-randomize ] ; then
+	echo -n $PIE
+	exit 0
+fi
+if readelf -h "$f" 2>/dev/null | grep -q 'Type:[[:space:]]*DYN'; then
+	PIE="DSO"
+	if readelf -d "$f" 2>/dev/null | grep -q '(DEBUG)'; then
+		PIE="yes"
+	fi
+else
+	h=`readelf -h  "$f" 2>/dev/null | grep 'Number of program headers' | awk '{ print $NF }'`
+	if [ "$h" -eq 0 ] ; then
+		PIE="n/a"
+	fi
+fi
+echo -n $PIE

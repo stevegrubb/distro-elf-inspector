@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+cnt=`objdump -j .text -d $f 2>/dev/null | wc -l`
+echo -n "$cnt"
+

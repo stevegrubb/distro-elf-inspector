@@ -1,0 +1,10 @@
+#!/bin/sh
+source ./tests.conf
+
+for f in $TESTS
+do
+	file="$f.log"
+	res=`./bits $file`
+	printf "aslr %-10s %s\n" "$f" "$res"
+done
+

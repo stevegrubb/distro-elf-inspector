@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+	echo -n "missing file"
+	exit 1
+fi
+
+f="$1"
+
+FOUND_ONE=0
+stacks=`/usr/bin/eu-readelf -l $f 2>/dev/null | grep STACK`
+if [ x"$stacks" != "x" ] ; then
+	perms=`echo $stacks | /bin/awk '{ print $7 }'`
+	if [ x"$perms" != x -a "$perms" != "RW" ] ; then
+		FOUND_ONE=1
+	fi
+fi
+old_stacks=`echo $stacks | /bin/grep -v GNU_STACK`
+if [ x"$old_stacks" != "x" ] ; then
+	FOUND_ONE=1
+fi
+heaps=`/usr/bin/eu-readelf -l $f 2>/dev/null | grep GNU_HEAP`
+if [ x"$heaps" != "x" ] ; then
+	FOUND_ONE=1
+fi
+if [ $FOUND_ONE = 1 ] ; then
+	echo -n "exec-stack"
+else
+	echo -n "ok"
+fi

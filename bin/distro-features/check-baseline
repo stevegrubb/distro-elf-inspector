@@ -1,0 +1,47 @@
+#!/bin/sh
+
+cwd=`pwd`
+
+echo -n "" > $distro_report
+echo -e "MITIGATIONS\n===========" >> $distro_report
+echo " Checking sysctls..."
+cd sysctls || exit
+./sysctl-check --critical >> $distro_report
+cd $cwd || exit
+echo " Checking lsms..."
+cd lsms || exit
+./lsms-check >> $distro_report
+cd $cwd || exit
+echo " Checking boot parameters..."
+cd bootparams || exit
+./bootparams-check >> $distro_report
+cd $cwd || exit
+echo " Checking aslr..."
+cd aslr || exit
+make clean >/dev/null 2>&1
+make >/dev/null 2>&1
+./all-gather >/dev/null
+./all-bits >> $distro_report
+make clean >/dev/null 2>&1
+cd $cwd || exit
+echo " Checking compiler options..."
+cd cf-protection || exit
+./baseline-cfp >> $distro_report
+cd $cwd || exit
+cd stack-clash || exit
+./baseline-scp >> $distro_report
+cd $cwd || exit
+cd stack-protector || exit
+./baseline-sssp >> $distro_report
+cd $cwd || exit
+cd fortify || exit
+./count-fortified >> $distro_report
+cd $cwd || exit
+cd relro || exit
+./baseline-relro >> $distro_report
+cd $cwd || exit
+echo " Checking seccomp..."
+cd seccomp || exit
+./baseline-seccomp >> $distro_report
+cd $cwd || exit
+

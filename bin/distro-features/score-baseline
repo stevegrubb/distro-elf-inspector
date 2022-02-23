@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if [ ! -e $distro_report ] ; then
+	echo "report missing"
+	exit 1
+fi
+
+echo -n "" > $distro_base_score
+
+distro=`rpm -q --queryformat '%{RELEASE}' glibc.$arch | tr '.' ' ' | awk '{ print $2 }'`
+sysctl=`cat $distro_report | grep sysctl | wc -l`
+lsms=`cat $distro_report | awk '/lsms/ { print $2 }'`
+boot=`cat $distro_report | grep bootparam | wc -l`
+aslr=`cat $distro_report | grep -v pie | awk '/^aslr/ { sum += $3 } END { print int(0.5 + sum/8) }'`
+pie=`cat $distro_report | grep pie | awk '/^aslr/ { sum += $3 } END { print int(0.5 + sum/8) }'`
+cfp=`cat $distro_report | awk '/control-flow-protection/ { sum += 4 }  END { print sum }'`
+scp=`cat $distro_report | awk '/stack-clash-protection/ { sum += 2 }  END { print sum }'`
+ssp=`cat $distro_report | awk '/protector-strong/ { sum += 4 } /^stack-protector/ { sum += 1 }  END { print sum }'`
+fortify=`cat $distro_report | awk '/^Fortif/ { print int(0.5 + $3/8) }'`
+relro=`cat $distro_report | grep relro | wc -l`
+seccomp=`cat $distro_report | grep seccomp | wc -l`
+total=$(( $sysctl + $lsms + $aslr + $pie + $cfp + $scp + $ssp + $fortify + $relro + $seccomp ))
+
+echo "distribution $distro" >> $distro_base_score
+echo "sysctl $sysctl" >> $distro_base_score
+echo "lsms $lsms" >> $distro_base_score
+echo "boot parameters $boot" >> $distro_base_score
+echo "aslr $aslr" >> $distro_base_score
+echo "pie $pie" >> $distro_base_score
+echo "ssp $ssp" >> $distro_base_score
+echo "fortify $fortify" >> $distro_base_score
+echo "cfp $cfp" >> $distro_base_score
+echo "scp $scp" >> $distro_base_score
+echo "relro $relro" >> $distro_base_score
+echo "seccomp $seccomp" >> $distro_base_score
+echo "total $total" >> $distro_base_score
+
