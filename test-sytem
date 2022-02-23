@@ -9,7 +9,7 @@ if [ ! -d $mcwd/data ] ; then
 	mkdir $mcwd/data
 fi
 
-echo "We are testing $release. If that's wrong hit Ctl-c within 5 seconds"
+echo "We are testing $release-$arch. If that's wrong hit Ctl-c within 5 seconds"
 sleep 6
 echo "Starting system test"
 
