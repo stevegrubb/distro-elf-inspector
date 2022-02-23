@@ -6,7 +6,7 @@ if [ $# -ne 1 ] ; then
 fi
 
 f="$1"
-if file "$f" 2>/dev/null | grep -qw 'dynamically' ; then
+if file -b "$f" 2>/dev/null | grep -qw 'dynamically' ; then
 	echo -n  `ldd $f 2>/dev/null | wc -l`
 else
 	echo -n "0"
