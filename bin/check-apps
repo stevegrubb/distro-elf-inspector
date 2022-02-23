@@ -70,4 +70,5 @@ echo "$HEADER" > $app_rollup
 cat $app_treport | grep -v -e '^$' | sort >> $app_rollup
 echo -e "\n" >> $app_rollup
 rm -f $app_treport
+rm -f $report_dir/*.$arch
 
