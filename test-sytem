@@ -21,6 +21,6 @@ fi
 ./csv2pivot $report_dir/app-rollup.csv
 mv pivottable.html $report_dir/
 
-"You can use ./view-report to open a pivottable of the application results"
+echo "You can use ./view-report to open a pivottable of the application results"
 
 echo "Done"
