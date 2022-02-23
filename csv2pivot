@@ -39,6 +39,9 @@ sed -i '/XXXxX/{N;s/\n//;}' "$FILE"
 # Remove the splice marker
 sed -i 's/XXXxX//g' "$FILE"
 
+# Get rid of empty lines
+sed -i '/^[[:space:]]*$/d' "$FILE"
+
 # Done...take a look
 echo "Note: the pivottable.html page requires a network connection to view"
 

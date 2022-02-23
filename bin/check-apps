@@ -69,6 +69,11 @@ app_rollup="$report_dir/app-rollup.csv"
 echo "$HEADER" > $app_rollup
 cat $app_treport | grep -v -e '^$' | sort >> $app_rollup
 echo -e "\n" >> $app_rollup
+
+# Get rid of empty lines
+sed -i '/^[[:space:]]*$/d' $app_rollup
+
+# Remove temp files
 rm -f $app_treport
 rm -f $report_dir/*.$arch
 
