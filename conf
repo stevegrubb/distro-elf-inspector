@@ -1,6 +1,6 @@
 export mcwd=`pwd`
 export release="f36"
 export arch="x86_64"
-export report_dir="$mcwd/data/$release"
+export report_dir="$mcwd/data/$release-$arch"
 export distro_report="$report_dir/distro-raw-report.txt"
 export distro_base_score="$report_dir/distro-base-score.txt"
