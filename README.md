@@ -5,7 +5,6 @@ BUILDING
 --------
 Nothing to build. Run it directly from the repo directory.
 
-
 USAGE
 -----
 ```
@@ -15,9 +14,15 @@ USAGE
 4) cat data/$release/distro-raw-report.txt
 ```
 
+Note: if you build and install the [tasker](https://github.com/stevegrubb/tasker) program, scanning the system can be paralellized.
+
 USING THE PIVOTTABLE
 --------------------
-TBD
+The pivottable is interactive. There are a colums of boxes on the left when the html page opens. You can drag the boxes to the empty gray box just to right to get the contents to display. You can place another box below that one to get it's output grouped by the box above it. For example, drag the package box to the gray area, then drag the files box to the gray area. Now you should see files grouped by packages.
+
+The boxes are also a drop down selector. Click on the down arrow to get the contents to open up. You can check or uncheck categories to modify your results. For example, if you open the PIE dropdown, uncheck everything but "no", then click apply. Now you should see the files that do not have PIE or PIC flags given to the compiler at build time. Once you click apply, notice that the label of the box changes to itallics text. This is how you know which boxes have been modified to not include all categories. To restore it, open the drop down and check all boxes and click apply.
+
+The pivottable works best when you have a minimal system with 600 or 700 packages. It is possible to scan and look at systems with a large number of packages installed. But the drop downs will start saying too many to display in some cases. For large systems, you may want to create queries using R or python's pandas module to use the app-rollup.csv file directly.
 
 FIELDS
 ------
@@ -41,9 +46,9 @@ FIELDS
 
 **FORTIFY_SOURCE** - This is either missing or ok.
 
-**CET** - This is either missing or ok.
+**CET** - This is either missing or ok. CET is Control-flow Enforcement Technology. This is the -fcf-protection flag to gcc.
 
-**STACK_CLASH** - This is either missing or ok.
+**STACK_CLASH** - This is either missing or ok. This is the -fstack-clash-protection flag to gcc.
 
 **RWX_SEGMENT** - This is either bad or ok. Bad meaning that there is a segment of memory marked with all access flags.
 
@@ -51,37 +56,37 @@ FIELDS
 
 **HAS_RPATH** - This looks to see if the program/library has either an rpath or runpath field. The values are none or rpath.
 
-**LINES_OF_CODE** - This is a count of lines of assembler in the text segmnent.
+**LINES_OF_CODE** - This is a count of lines of assembler in the text segmnent. It stands in as a rough order of magnitude indicator.
 
 **LINK_FAN_IN** - This is a count of how many libraries are linked to the application or library.
 
-**EXTERN_FUNCS** - This is a count of how many external functions the file links to.
+**EXTERN_FUNCS** - This is a count of how many external functions the file uses to.
 
 **FILE_WRITABLE** - This is a check or whether the file is group or world writable. The values are writable or ok.
 
-**CHGRPS_ISSUE** - 
+**CHGRPS_ISSUE** - This looks to see if supplemental groups are reset in addition to changing the group id. The values are: n/a, no, yes.
 
-**USES_DEPRECATED_FUNCS** - 
+**USES_DEPRECATED_FUNCS** - This looks to see if it uses glibc functions documented in man pages to be deprecated. The functions looked for include: bcopy, bcmp, gets, getwd, mktemp, tmpnam, rindex, index, getpass, getpw, valloc, rand, and vfork. The output is a count of how many it found. 0 means it's clean.
 
-**USES_CERT_UNSAFE_FUNCS** - 
+**USES_CERT_UNSAFE_FUNCS** - This looks to see if it uses functions documented by CERT to be unsafe to use functions (MSC24-C). The functions looked for include: access, faccessat, system, popen, rand, gets, sprintf, strcpy, scanf, getchar, atof, atoi, atol, atoll, rewind, setbuf, and ctime. The output is a count of how many it found. 0 means it's clean.
 
-**USES_UNSAFE_STRING_FUNCS** - 
+**USES_UNSAFE_STRING_FUNCS** - This looks to see if it uses unsafe string functions. The functions looked for include: strcpy, strcat, sprintf, and vsprintf. The output is a count of how many it found. 0 means it's clean.
 
-**USES_PARSING_FUNCS** - 
+**USES_PARSING_FUNCS** - This looks to see if it uses functions known to be used in parsers. The functions looked for include: strtok, strtok_r, scanf, sscanf, and fscanf. The output is a count of how many it found. 0 means it's clean.
 
-**USES_SHELL_EXECUTION** - 
+**USES_SHELL_EXECUTION** - This looks to see if it uses execution functions that uses a shell environment. The functions looked for include: system and popen. The output is a count of how many it found. 0 means it's clean.
 
-**USES_IPV4_ONLY_FUNCS** - 
+**USES_IPV4_ONLY_FUNCS** - This looks to see if it uses functions known to be IPv4 only. This spots legacy networking applications. The functions looked for include: gethostbyname, gethostbyname2, getservbyname, gethostbyaddr, getservbyport, inet_addr, inet_aton, inet_nsap_add, inet_ntoa, inet_nsap_ntoa, inet_makeaddr, inet_netof, inet_network, inet_neta, inet_net_ntop, inet_net_pton, rcmd, rexec, and rresvport. The output is a count of how many it found. 0 means it's clean.
 
-**PROG_LANGUAGE** - 
+**PROG_LANGUAGE** - This tried to detect the language the program was written in by looking for functions uniq to a specific programming language. The langauges it current detects are: C, C++, OCaml, GHC, Fortran, go, and rust.
 
-**USES_SECCOMP** - 
+**USES_SECCOMP** - This looks to see if it uses any seccomp functions. The values are no and yes.
 
-**USES_CAPABILITIES** - 
+**USES_CAPABILITIES** - This looks to see if functions associated with manipulating posix capabilities are used. The values are no and yes.
 
-**CHANGES_UID** - 
+**CHANGES_UID** - This looks to see if functions associated with changing the uid are used. The values are no and yes.
 
-**USES_CHROOT** - 
+**USES_CHROOT** - This looks to see if the chroot system call is used. The values are no and yes.
 
-**USES_DLOPEN** - 
+**USES_DLOPEN** - This looks to see if dlopen ifunction is used. The values are no and yes.
 
