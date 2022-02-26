@@ -97,3 +97,19 @@ SCREENSHOT
 
  ![pivot table](https://github.com/stevegrubb/distro-elf-inspector/blob/1d89add7d7cc29e9f8ec54f33d45ca95a6d50d34/pivottable-screenshot.png?raw=true)
 
+SCRIPTING
+---------
+When the data is large, it's easier to write some scripts in R or Python + Pandas to look for interesting insights. Suppose you wanted to review a table of PIE vs RELRO to see if the distribution is compiled right. (You want full RELRO when anything is PIE.) You could run this script in R:
+
+```
+df <- read.csv(file = "app-rollup.csv", header = TRUE)
+xt <- xtabs(~ PIE + RELRO, data=df)
+print(xt[c(3,1,4),c(2,3,1)])
+
+     RELRO
+PIE     no partial full
+  no   129     170    9
+  DSO  319     614 8620
+  yes    0      23 4209
+```
+
