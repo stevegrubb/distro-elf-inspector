@@ -99,7 +99,9 @@ SCREENSHOT
 
 SCRIPTING
 ---------
-When the data is large, it's easier to write some scripts in R or Python + Pandas to look for interesting insights. Suppose you wanted to review a table of PIE vs RELRO to see if the distribution is compiled right. (You want full RELRO when anything is PIE.) You could run this script in R:
+When the data is large, it's easier to write some scripts in R or Python + Pandas to look for interesting insights. Suppose you wanted to review a table of PIE vs RELRO to see if the distribution is compiled for safety. 
+
+You would want everything compiled as PIE. You want full RELRO when anything is PIE. So, in a cross tabulation the big numbers should be concentrated down and to the right. You could run this script in R:
 
 ```
 df <- read.csv(file = "app-rollup.csv", header = TRUE)
