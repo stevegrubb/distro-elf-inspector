@@ -14,7 +14,7 @@ USAGE
 4) cat data/$release/distro-raw-report.txt
 ```
 
-Note: if you build and install the [tasker](https://github.com/stevegrubb/tasker) program, scanning the system can be paralellized.
+Note: if you build and install the [tasker](https://github.com/stevegrubb/tasker) program, scanning the system can be parallelized.
 
 USING THE PIVOTTABLE
 --------------------
@@ -68,7 +68,7 @@ FIELDS
 
 **USES_DEPRECATED_FUNCS** - This looks to see if it uses glibc functions documented in man pages to be deprecated. The functions looked for include: bcopy, bcmp, gets, getwd, mktemp, tmpnam, rindex, index, getpass, getpw, valloc, rand, and vfork. The output is a count of how many it found. 0 means it's clean.
 
-**USES_CERT_UNSAFE_FUNCS** - This looks to see if it uses functions documented by CERT to be unsafe to use functions (MSC24-C). The functions looked for include: access, faccessat, system, popen, rand, gets, sprintf, strcpy, scanf, getchar, atof, atoi, atol, atoll, rewind, setbuf, and ctime. The output is a count of how many it found. 0 means it's clean.
+**USES_CERT_UNSAFE_FUNCS** - This looks to see if it uses functions recommended by CERT MSC24-C as unsafe to use. The functions looked for include: access, faccessat, system, popen, rand, gets, sprintf, strcpy, scanf, getchar, atof, atoi, atol, atoll, rewind, setbuf, and ctime. The output is a count of how many it found. 0 means it's clean.
 
 **USES_UNSAFE_STRING_FUNCS** - This looks to see if it uses unsafe string functions. The functions looked for include: strcpy, strcat, sprintf, and vsprintf. The output is a count of how many it found. 0 means it's clean.
 
