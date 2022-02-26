@@ -90,3 +90,10 @@ FIELDS
 
 **USES_DLOPEN** - This looks to see if the dlopen function is used. The values are no and yes.
 
+SCREENSHOT
+----------
+
+### Pivot Table
+
+ ![pivot table](https://github.com/stevegrubb/distro-elf-inspector/blob/1d89add7d7cc29e9f8ec54f33d45ca95a6d50d34/pivottable-screenshot.png?raw=true)
+
