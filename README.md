@@ -56,15 +56,15 @@ FIELDS
 
 **HAS_RPATH** - This looks to see if the program/library has either an rpath or runpath field. The values are none or rpath.
 
-**LINES_OF_CODE** - This is a count of lines of assembler in the text segmnent. It stands in as a rough order of magnitude indicator.
+**LINES_OF_CODE** - This is a count of lines of assembler in the text segment. It stands in as a rough order of magnitude indicator.
 
-**LINK_FAN_IN** - This is a count of how many libraries are linked to the application or library.
+**LINK_FAN_IN** - This is a count of how many libraries are linked to the application or library. This may point to complexity.
 
-**EXTERN_FUNCS** - This is a count of how many external functions the file uses to.
+**EXTERN_FUNCS** - This is a count of how many external functions the file uses. This may point to complexity.
 
-**FILE_WRITABLE** - This is a check or whether the file is group or world writable. The values are writable or ok.
+**FILE_WRITABLE** - This is a check of whether the file is group or world writable. The values are writable or ok.
 
-**CHGRPS_ISSUE** - This looks to see if supplemental groups are reset in addition to changing the group id. The values are: n/a, no, yes.
+**CHGRPS_ISSUE** - This looks to see if supplemental groups are updated in addition to changing the group id. The values are: n/a, no, yes.
 
 **USES_DEPRECATED_FUNCS** - This looks to see if it uses glibc functions documented in man pages to be deprecated. The functions looked for include: bcopy, bcmp, gets, getwd, mktemp, tmpnam, rindex, index, getpass, getpw, valloc, rand, and vfork. The output is a count of how many it found. 0 means it's clean.
 
@@ -78,7 +78,7 @@ FIELDS
 
 **USES_IPV4_ONLY_FUNCS** - This looks to see if it uses functions known to be IPv4 only. This spots legacy networking applications. The functions looked for include: gethostbyname, gethostbyname2, getservbyname, gethostbyaddr, getservbyport, inet_addr, inet_aton, inet_nsap_add, inet_ntoa, inet_nsap_ntoa, inet_makeaddr, inet_netof, inet_network, inet_neta, inet_net_ntop, inet_net_pton, rcmd, rexec, and rresvport. The output is a count of how many it found. 0 means it's clean.
 
-**PROG_LANGUAGE** - This tried to detect the language the program was written in by looking for functions uniq to a specific programming language. The langauges it current detects are: C, C++, OCaml, GHC, Fortran, go, and rust.
+**PROG_LANGUAGE** - This tries to detect the language the program was written in by looking for functions uniq to a specific programming language. The langauges it current detects are: C, C++, OCaml, GHC, Fortran, go, and rust.
 
 **USES_SECCOMP** - This looks to see if it uses any seccomp functions. The values are no and yes.
 
@@ -88,5 +88,5 @@ FIELDS
 
 **USES_CHROOT** - This looks to see if the chroot system call is used. The values are no and yes.
 
-**USES_DLOPEN** - This looks to see if dlopen ifunction is used. The values are no and yes.
+**USES_DLOPEN** - This looks to see if the dlopen function is used. The values are no and yes.
 
