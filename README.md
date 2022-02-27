@@ -18,7 +18,7 @@ Note: if you build and install the [tasker](https://github.com/stevegrubb/tasker
 
 USING THE PIVOTTABLE
 --------------------
-The pivottable is interactive. There are a colums of boxes on the left when the html page opens. You can drag the boxes to the empty gray box just to right to get the contents to display. You can place another box below that one to get it's output grouped by the box above it. For example, drag the package box to the gray area, then drag the files box to the gray area. Now you should see files grouped by packages.
+The pivottable is interactive. There are a columns of boxes on the left when the html page opens. You can drag the boxes to the empty gray box just to right to get the contents to display. You can place another box below that one to get it's output grouped by the box above it. For example, drag the package box to the gray area, then drag the files box to the gray area. Now you should see files grouped by packages.
 
 The boxes are also a drop down selector. Click on the down arrow to get the contents to open up. You can check or uncheck categories to modify your results. For example, if you open the PIE dropdown, uncheck everything but "no", then click apply. Now you should see the files that do not have PIE or PIC flags given to the compiler at build time. Once you click apply, notice that the label of the box changes to itallics text. This is how you know which boxes have been modified to not include all categories. To restore it, open the drop down and check all boxes and click apply.
 
