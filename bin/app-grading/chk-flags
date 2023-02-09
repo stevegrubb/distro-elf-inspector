@@ -31,7 +31,7 @@ if (( $(echo "$ANNOCHECK_VERSION < 9.49" | bc -l) )); then
 		exit 0
 	fi
 
-	yy=`echo $xx | grep FAIL | egrep -v 'Compiled without|Gaps were detected|there are FAIL results that'`
+	yy=`echo $xx | grep FAIL | grep -Ev 'Compiled without|Gaps were detected|there are FAIL results that'`
 	if [ x"$yy" != "x" ] ; then
 		if [ "$2" = "segment" ] ; then
 			echo -n "bad"

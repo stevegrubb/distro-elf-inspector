@@ -8,7 +8,7 @@ fi
 f="$1"
 
 total="no"
-xx=`readelf -sW $f 2>/dev/null | grep FUNC | egrep 'seccomp_rule_add|seccomp'`
+xx=`readelf -sW $f 2>/dev/null | grep FUNC | grep -E 'seccomp_rule_add|seccomp'`
 if [ x"$xx" != "x" ] ; then
 	total="yes"
 fi

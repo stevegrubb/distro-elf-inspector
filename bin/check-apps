@@ -10,7 +10,7 @@ if [ $# -ge 1 ] ; then
 else
 	# Skip the kernel as its special
 	echo " Querying packages..." >&2
-	packages=`rpm -qa --queryformat "%{NAME}.%{ARCH}\n" | egrep -v 'kernel.|debuginfo.|.noarch|gpg-pubkey' | sort`
+	packages=`rpm -qa --queryformat "%{NAME}.%{ARCH}\n" | grep -Ev 'kernel.|debuginfo.|.noarch|gpg-pubkey' | sort`
 fi
 
 #Build tables for later
@@ -21,12 +21,12 @@ export DAEMON=`grep ^ExecStart /lib/systemd/system/*.service | tr '=' ' ' | awk 
 
 # Look for parsers of untrusted media...need this for later
 UNTRUSTED1=""
-rpms=`rpm -qa --queryformat "%{NAME}\n" | egrep -v '\-devel|^perl|^python'`
+rpms=`rpm -qa --queryformat "%{NAME}\n" | grep -Ev '\-devel|^perl|^python'`
 for p in $rpms
 do
-        rpm -qi $p | grep -i 'librar' | egrep -i 'image format files|rendering library|Adobe Flash|multimedia library|image files|codec|BMP|PPM|PCX|GIF|JPEG|PNG|SVG |MPEG4|h263|ac3|asf| avi|mjpeg|archive formats|bzip2|zip archives' >/dev/null 2>&1
+        rpm -qi $p | grep -i 'librar' | grep -Ei 'image format files|rendering library|Adobe Flash|multimedia library|image files|codec|BMP|PPM|PCX|GIF|JPEG|PNG|SVG |MPEG4|h263|ac3|asf| avi|mjpeg|archive formats|bzip2|zip archives' >/dev/null 2>&1
         if [ $? -eq 0 ] ; then
-                UNTRUSTED1="$UNTRUSTED1 `rpm -ql $p | egrep '^\/lib|^\/usr\/lib'`"
+                UNTRUSTED1="$UNTRUSTED1 `rpm -ql $p | grep -E '^\/lib|^\/usr\/lib'`"
         fi
 done
 export UNTRUSTED=`echo "$UNTRUSTED1" | sort`

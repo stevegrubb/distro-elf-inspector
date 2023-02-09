@@ -6,7 +6,7 @@ if [ $# -ne 1 ] ; then
 fi
 
 f="$1"
-res=`objdump -j .dynamic -x $f 2>/dev/null | egrep -i 'rpath|runpath'`
+res=`objdump -j .dynamic -x $f 2>/dev/null | grep -Ei 'rpath|runpath'`
 if [ x"$res" = "x" ] ; then
 	echo -n "none"
 elif test `echo "$res" | grep "runpath"` ; then

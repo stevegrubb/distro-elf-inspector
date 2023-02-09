@@ -17,7 +17,7 @@
 
 critical="fips|audit=|audit_backlog_limit|slub_debug|page_poison|slab_nomerge|pti=|vsyscall|init_on_alloc|init_on_free|page_alloc.shuffle|debugfs=|randomize_kstack_offset"
 
-list=`cat /proc/cmdline 2>/dev/null | tr ' ' '\n' | egrep "$critical"`
+list=`cat /proc/cmdline 2>/dev/null | tr ' ' '\n' | grep -E "$critical"`
 for i in $list
 do
 	echo "bootparam $i"

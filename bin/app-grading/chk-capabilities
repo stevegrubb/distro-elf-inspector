@@ -8,7 +8,7 @@ fi
 f="$1"
 
 total="no"
-xx=`readelf -sW $f 2>/dev/null | grep FUNC | egrep 'capng_apply|capng_change_id|capng_lock|capset|cap_set'`
+xx=`readelf -sW $f 2>/dev/null | grep FUNC | grep -E 'capng_apply|capng_change_id|capng_lock|capset|cap_set'`
 if [ x"$xx" != "x" ] ; then
 	total="yes"
 fi

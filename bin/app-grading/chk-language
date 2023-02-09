@@ -28,11 +28,11 @@ if [ x"$xx" != "x" ] ; then
 	echo -n "Fortran"
 	exit 0
 fi
-xx=`readelf -SW $f 2>/dev/null | egrep '.gosymtab|.go.buildinfo|x_cgo_init'`
+xx=`readelf -SW $f 2>/dev/null | grep -E '.gosymtab|.go.buildinfo|x_cgo_init'`
 if [ x"$xx" != "x" ] ; then
 	lang="go"
 else
-	if strings $f | egrep 'rustc-demangle|rust_begin_short_backtrace' >/dev/null ; then
+	if strings $f | grep -E 'rustc-demangle|rust_begin_short_backtrace' >/dev/null ; then
 		lang="rust"
 	fi
 fi

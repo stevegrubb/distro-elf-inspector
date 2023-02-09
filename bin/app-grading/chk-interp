@@ -13,7 +13,7 @@ if [ `echo "$f" | grep '\/lib' | grep '\.so'` ] ; then
 	echo -n "ok"
 	exit 0
 fi
-if [ `echo "$f" | egrep '$\.o|$\.a'` ] ; then
+if [ `echo "$f" | grep -E '$\.o|$\.a'` ] ; then
 	echo -n "ok"
 	exit 0
 fi
