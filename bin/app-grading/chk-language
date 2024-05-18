@@ -8,9 +8,14 @@ fi
 f="$1"
 lang="C"
 syms=`objdump --dynamic-syms --demangle $f 2>/dev/null`
-xx=`echo $syms | grep 'std::cout'`
+xx=`echo $syms | grep -E 'std::cout|__gnu_cxx::'`
 if [ x"$xx" != "x" ] ; then
 	echo -n "C++"
+	exit 0
+fi
+xx=`echo $syms | grep -E '^.nv_fatbin|^.nvinfo'
+if [ x"$xx" != "x" ] ; then
+	echo -n "Cuda"
 	exit 0
 fi
 xx=`echo $syms | grep 'camlStdlib__'`
