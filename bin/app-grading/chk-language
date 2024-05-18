@@ -13,11 +13,6 @@ if [ x"$xx" != "x" ] ; then
 	echo -n "C++"
 	exit 0
 fi
-xx=`echo $syms | grep -E '^.nv_fatbin|^.nvinfo'
-if [ x"$xx" != "x" ] ; then
-	echo -n "Cuda"
-	exit 0
-fi
 xx=`echo $syms | grep 'camlStdlib__'`
 if [ x"$xx" != "x" ] ; then
 	echo -n "OCaml"
@@ -31,6 +26,11 @@ fi
 xx=`echo $syms | grep '_gfortran_'`
 if [ x"$xx" != "x" ] ; then
 	echo -n "Fortran"
+	exit 0
+fi
+xx=`strings $f | grep -E '^.nv_fatbin|^.nvinfo'`
+if [ x"$xx" != "x" ] ; then
+	echo -n "Cuda"
 	exit 0
 fi
 xx=`readelf -SW $f 2>/dev/null | grep -E '.gosymtab|.go.buildinfo|x_cgo_init'`
